@@ -1,7 +1,6 @@
 Settings = require("game.settings")
 UI = require("game.ui");
 
-
 IsPaused = false
 Screen = {}
 

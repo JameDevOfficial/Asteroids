@@ -33,9 +33,23 @@ function ship:new(opts)
 end
 
 function ship:render()
-
+    love.graphics.push();
+    love.graphics.translate(self.body:getX(), self.body:getY())
+    love.graphics.rotate(self.body:getAngle())
+    love.graphics.setColor(self.color)
+    love.graphics.polygon("line", self.shape)
+    love.graphics.pop()
 end
 
-function ship:update()
+function ship:update(dt)
+    
+end
 
+function ship:applyThrust(force)
+    if self.body then
+        local angle = self.body:getAngle()
+        local forceX = math.cos(angle) * force
+        local forceY = math.sin(angle) * force
+        self.body:applyForce(forceX, forceY)
+    end
 end
