@@ -8,6 +8,10 @@ fontDefault:setFilter("nearest", "nearest")
 font30:setFilter("nearest", "nearest")
 font50:setFilter("nearest", "nearest")
 
+UI.drawFrame = function ()
+    love.graphics.setBackgroundColor(0,0,0)
+end
+
 UI.drawDebug = function()
     if Settings.DEBUG == true then
         love.graphics.setFont(fontDefault)
