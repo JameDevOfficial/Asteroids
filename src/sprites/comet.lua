@@ -9,6 +9,7 @@ comet.spawnCometRandom = function(dt)
     local spawn = math.random(1, 100)
     if spawn > Settings.comet.spawnChance then return end
 
+
     local newComet = Comet:new({ world = World })
     table.insert(Comets, newComet)
     comet.timer = 0
@@ -34,11 +35,16 @@ local function generateRandomMeteorShape(w, h)
 end
 
 function comet:new(opts)
-    opts       = opts or {}
-    local o    = setmetatable({}, self)
-    o.size     = opts.size or Settings.ship.size
-    o.color    = opts.color or { 1, 1, 1, 1 }
-    o.position = opts.position or { x = Screen.centerX, y = Screen.centerY }
+    opts          = opts or {}
+    local o       = setmetatable({}, self)
+    o.size        = opts.size or Settings.ship.size
+    o.color       = opts.color or { 1, 1, 1, 1 }
+    local randPos = math.random(1, 2)
+    if randPos == 1 then
+        o.position = { x = math.random(0, Screen.X), y = (math.random(1, 2) == 1 and 0 or Screen.Y) }
+    else
+        o.position = { x = (math.random(1, 2) == 1 and 0 or Screen.X), y = math.random(0, Screen.Y) }
+    end
     o.velocity = opts.velocity or { x = 0, y = 0 }
     o.rotation = opts.rotation or 0
     o.offset   = opts.offset or { x = 0, y = 0 }
