@@ -37,21 +37,22 @@ end
 function ship:checkMovement(dt)
     if Game.state == "game" then
         if love.keyboard.isDown("w") or love.keyboard.isDown("up") then
-            PlayerShip:applyThrust(500)
+            self:applyThrust(500)
         end
 
         if love.keyboard.isDown("a") or love.keyboard.isDown("left") then
-            PlayerShip:rotate(-dt * 3)
+            self:rotate(-dt * 3)
         end
 
         if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
-            PlayerShip:rotate(dt * 3)
+            self:rotate(dt * 3)
         end
     end
 end
 
 function ship:render()
     love.graphics.push();
+    love.graphics.setLineWidth(2)
     love.graphics.translate(self.body:getX(), self.body:getY())
     love.graphics.rotate(self.body:getAngle())
     love.graphics.setColor(self.color)
@@ -60,7 +61,19 @@ function ship:render()
 end
 
 function ship:update(dt)
-
+    if not self.body then return end 
+    if self.body:getX() > Screen.X + Settings.ship.screenPadding then
+        self.body:setPosition(-Settings.ship.screenPadding, self.body:getY())
+    end
+    if self.body:getX() < - Settings.ship.screenPadding then
+        self.body:setPosition(Screen.X + Settings.ship.screenPadding, self.body:getY())
+    end
+    if self.body:getY() > Screen.Y + Settings.ship.screenPadding then
+        self.body:setPosition(self.body:getX(), -Settings.ship.screenPadding)
+    end
+    if self.body:getY() < - Settings.ship.screenPadding then
+        self.body:setPosition(self.body:getX(), Screen.Y + Settings.ship.screenPadding)
+    end
 end
 
 function ship:applyThrust(force)

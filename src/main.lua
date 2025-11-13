@@ -23,7 +23,8 @@ end
 
 function love.update(dt)
     World:update(dt)
-    Ship:checkMovement(dt)
+    PlayerShip:checkMovement(dt)
+    PlayerShip:update(dt)
 end
 
 function love.draw()
