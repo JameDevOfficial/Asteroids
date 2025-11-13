@@ -5,7 +5,7 @@ Ship = require("sprites.ship")
 IsPaused = false
 Screen = {}
 PlayerShip = Ship
-World = love.physics.newWorld(0,0,true)
+World = love.physics.newWorld(0, 0, true)
 Game = {
     state = "unloaded" -- unloaded, loading, <menu, game, lost>
 }
@@ -45,6 +45,9 @@ function love.keypressed(key, scancode, isrepeat)
     local dt = love.timer.getDelta()
     if key == "f5" then
         Settings.DEBUG = not Settings.DEBUG
+    end
+    if key == "space" then
+        PlayerShip:shoot(love.timer.getDelta())
     end
 end
 

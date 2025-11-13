@@ -2,22 +2,22 @@ local ship = {}
 ship.__index = ship
 
 function ship:new(opts)
-    opts       = opts or {}
-    local o    = setmetatable({}, self)
-    o.size     = opts.size or Settings.ship.size
-    o.color    = opts.color or { 1, 1, 1, 1 }
-    o.position = opts.position or { x = Screen.centerX, y = Screen.centerY }
-    o.velocity = opts.velocity or { x = 0, y = 0 }
-    o.damping  = opts.damping or 0.5
-    o.rotation = opts.rotation or 0
-    o.offset   = opts.offset or { x = 0, y = 0 }
-    o.scale    = opts.scale or { w = 1, y = 1 }
+    opts          = opts or {}
+    local o       = setmetatable({}, self)
+    o.size        = opts.size or Settings.ship.size
+    o.color       = opts.color or { 1, 1, 1, 1 }
+    o.position    = opts.position or { x = Screen.centerX, y = Screen.centerY }
+    o.velocity    = opts.velocity or { x = 0, y = 0 }
+    o.damping     = opts.damping or 0.5
+    o.rotation    = opts.rotation or 0
+    o.offset      = opts.offset or { x = 0, y = 0 }
+    o.scale       = opts.scale or { w = 1, y = 1 }
     o.projectiles = {}
 
-    local w_2  = o.size.w / 2
-    local h_2  = o.size.h / 2
+    local w_2     = o.size.w / 2
+    local h_2     = o.size.h / 2
 
-    o.shape    = {
+    o.shape       = {
         w_2, 0,
         -w_2, -h_2,
         -(o.size.w / 4), 0,
@@ -30,6 +30,7 @@ function ship:new(opts)
         o.fixture = love.physics.newPolygonShape(unpack(o.shape))
         o.collsion = love.physics.newFixture(o.body, o.fixture)
         o.collsion:setUserData(o)
+        o.collsion:setFilterData(1, 0xFFFF, -1)
         o.body:setAngle(o.rotation)
     end
     return o
@@ -48,22 +49,26 @@ function ship:checkMovement(dt)
         if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
             self:rotate(dt * 3)
         end
-
-        if love.keypressed("space") then
-            self:shoot()
-        end
     end
 end
 
 function ship:shoot(dt)
     local projectile = {}
-    projectile.body = love.physics.newBody(World.world, self.body:getX(), self.body:getY(), "dynamic")
-    projectile.fixture = love.physics.newRectangleShape(2, 10)
+    projectile.size = { w = 25, h = 3 }
+    projectile.body = love.physics.newBody(World, self.body:getX(), self.body:getY(), "dynamic")
+    projectile.fixture = love.physics.newRectangleShape(projectile.size.w, projectile.size.h)
     projectile.collision = love.physics.newFixture(projectile.body, projectile.fixture)
-    projectile.rotation = ship.body:getAngle()
-    projectile.body:setAngle(projectile.rotation)
-    
-    projectile:setUserData(projectile)
+    projectile.collision:setUserData(projectile)
+    projectile.collision:setFilterData(2, 0xFFFF, -1)
+
+    local angle = self.body:getAngle()
+    projectile.body:setAngle(angle)
+
+    local forceX = math.cos(angle) * Settings.ship.projectileSpeed
+    local forceY = math.sin(angle) * Settings.ship.projectileSpeed
+    projectile.body:applyLinearImpulse(forceX, forceY)
+
+    table.insert(self.projectiles, projectile)
 end
 
 function ship:render()
@@ -73,22 +78,51 @@ function ship:render()
     love.graphics.rotate(self.body:getAngle())
     love.graphics.setColor(self.color)
     love.graphics.polygon("line", self.shape)
+
+    if Settings.DEBUG then
+        love.graphics.setColor(1, 0, 0, 1)
+        love.graphics.line(0, 0, 30, 0)
+    end
+
     love.graphics.pop()
+
+
+
+    for _, projectile in ipairs(self.projectiles) do
+        love.graphics.push()
+        love.graphics.translate(projectile.body:getX(), projectile.body:getY())
+        love.graphics.rotate(projectile.body:getAngle())
+        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.rectangle("fill", -projectile.size.w / 2, -projectile.size.h / 2, projectile.size.w,
+            projectile.size.h)
+        love.graphics.pop()
+    end
 end
 
 function ship:update(dt)
-    if not self.body then return end 
+    if not self.body then return end
     if self.body:getX() > Screen.X + Settings.ship.screenPadding then
         self.body:setPosition(-Settings.ship.screenPadding, self.body:getY())
     end
-    if self.body:getX() < - Settings.ship.screenPadding then
+    if self.body:getX() < -Settings.ship.screenPadding then
         self.body:setPosition(Screen.X + Settings.ship.screenPadding, self.body:getY())
     end
     if self.body:getY() > Screen.Y + Settings.ship.screenPadding then
         self.body:setPosition(self.body:getX(), -Settings.ship.screenPadding)
     end
-    if self.body:getY() < - Settings.ship.screenPadding then
+    if self.body:getY() < -Settings.ship.screenPadding then
         self.body:setPosition(self.body:getX(), Screen.Y + Settings.ship.screenPadding)
+    end
+
+    for i = #self.projectiles, 1, -1 do
+        local p = self.projectiles[i]
+        local x, y = p.body:getX(), p.body:getY()
+
+        -- Check if out of bounds with padding
+        if x < -50 or x > Screen.X + 50 or y < -50 or y > Screen.Y + 50 then
+            p.body:destroy()
+            table.remove(self.projectiles, i)
+        end
     end
 end
 
