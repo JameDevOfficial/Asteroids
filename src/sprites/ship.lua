@@ -12,6 +12,7 @@ function ship:new(opts)
     o.rotation = opts.rotation or 0
     o.offset   = opts.offset or { x = 0, y = 0 }
     o.scale    = opts.scale or { w = 1, y = 1 }
+    o.projectiles = {}
 
     local w_2  = o.size.w / 2
     local h_2  = o.size.h / 2
@@ -47,7 +48,22 @@ function ship:checkMovement(dt)
         if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
             self:rotate(dt * 3)
         end
+
+        if love.keypressed("space") then
+            self:shoot()
+        end
     end
+end
+
+function ship:shoot(dt)
+    local projectile = {}
+    projectile.body = love.physics.newBody(World.world, self.body:getX(), self.body:getY(), "dynamic")
+    projectile.fixture = love.physics.newRectangleShape(2, 10)
+    projectile.collision = love.physics.newFixture(projectile.body, projectile.fixture)
+    projectile.rotation = ship.body:getAngle()
+    projectile.body:setAngle(projectile.rotation)
+    
+    projectile:setUserData(projectile)
 end
 
 function ship:render()
