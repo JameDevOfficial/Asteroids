@@ -8,8 +8,8 @@ fontDefault:setFilter("nearest", "nearest")
 font30:setFilter("nearest", "nearest")
 font50:setFilter("nearest", "nearest")
 
-UI.drawFrame = function ()
-    love.graphics.setBackgroundColor(0,0,0)
+UI.drawFrame = function()
+    love.graphics.setBackgroundColor(0, 0, 0)
 end
 
 UI.drawDebug = function()
@@ -54,11 +54,13 @@ UI.drawDebug = function()
             "Game Paused: %s\n" ..
             "Delta Time: %.4fs (%.1f ms)\n" ..
             "Avg Delta: %.4fs (%.1f ms)\n" ..
-            "Time: %.2fs",
+            "Time: %.2fs\n" ..
+            "Comets: %d",
             tostring(IsPaused),
             dt, dt * 1000,
             avgDt, avgDt * 1000,
-            love.timer.getTime()
+            love.timer.getTime(),
+            #Comets
         )
         love.graphics.print(playerText, 10, y)
         y = y + fontDefault:getHeight() * 8

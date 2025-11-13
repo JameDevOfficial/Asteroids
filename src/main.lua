@@ -1,10 +1,12 @@
 Settings = require("game.settings")
 UI = require("game.ui");
 Ship = require("sprites.ship")
+Comet = require("sprites.comet")
 
 IsPaused = false
 Screen = {}
 PlayerShip = Ship
+Comets = {}
 World = love.physics.newWorld(0, 0, true)
 Game = {
     state = "unloaded" -- unloaded, loading, <menu, game, lost>
@@ -25,6 +27,7 @@ function love.update(dt)
     World:update(dt)
     PlayerShip:checkMovement(dt)
     PlayerShip:update(dt)
+    Comet.spawnCometRandom(dt)
 end
 
 function love.draw()
@@ -34,6 +37,9 @@ function love.draw()
 
     if Settings.DEBUG == true then
         UI.drawDebug()
+    end
+    for i, v in ipairs(Comets) do
+        v:render()
     end
 end
 
