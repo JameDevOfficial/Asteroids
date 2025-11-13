@@ -45,7 +45,7 @@ function comet:new(opts)
     else
         o.position = { x = (math.random(1, 2) == 1 and 0 or Screen.X), y = math.random(0, Screen.Y) }
     end
-    o.velocity = opts.velocity or { x = 0, y = 0 }
+    o.velocity = opts.velocity or { x = 0, y = 0 } 
     o.rotation = opts.rotation or 0
     o.offset   = opts.offset or { x = 0, y = 0 }
     o.scale    = opts.scale or { w = 1, y = 1 }
@@ -64,7 +64,11 @@ function comet:new(opts)
         o.collsion:setFilterData(1, 0xFFFF, -1)
         o.body:setAngle(o.rotation)
 
-        local angle = math.random() * math.pi * 2
+        local targetX = Screen.centerX + math.random(-200, 200)
+        local targetY = Screen.centerY + math.random(-200, 200)
+        local angle = math.atan2(targetY - o.position.y, targetX - o.position.x)
+
+        angle = angle + math.rad(math.random(-30, 30))
         o.body:setLinearVelocity(math.cos(angle) * Settings.comet.speed, math.sin(angle) * Settings.comet.speed)
         o.body:setAngularVelocity(math.random(-2, 2))
     else
