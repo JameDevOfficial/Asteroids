@@ -11,4 +11,9 @@ M.comet = {}
 M.comet.spawnChance = 10 -- %
 M.comet.spawnDelay = 0.5 -- ms
 M.comet.speed = 75       -- ms
+
+M.collision = {}
+M.collision.ship = 1
+M.collision.comet = 2
+M.collision.projectile = 4
 return M;

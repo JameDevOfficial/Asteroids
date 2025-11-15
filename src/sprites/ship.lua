@@ -32,7 +32,7 @@ function ship:new(opts)
         o.fixture = love.physics.newPolygonShape(unpack(o.shape))
         o.collision = love.physics.newFixture(o.body, o.fixture)
         o.collision:setUserData(o)
-        o.collision:setFilterData(1, 0xFFFD, 0)
+        o.collision:setFilterData(Settings.collision.ship, Settings.collision.comet, 0)
         o.body:setAngle(o.rotation)
     end
     return o
@@ -62,7 +62,7 @@ function ship:shoot(dt)
     projectile.fixture = love.physics.newRectangleShape(projectile.size.w, projectile.size.h)
     projectile.collision = love.physics.newFixture(projectile.body, projectile.fixture)
     projectile.collision:setUserData(projectile)
-    projectile.collision:setFilterData(2, 0xFFFF, 1)
+    projectile.collision:setFilterData(Settings.collision.projectile, Settings.collision.comet, 0)
     local ship = self
 
     function projectile:destroy()

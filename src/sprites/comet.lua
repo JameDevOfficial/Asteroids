@@ -62,7 +62,7 @@ function comet:new(opts)
         o.fixture = love.physics.newPolygonShape(unpack(o.shape))
         o.collision = love.physics.newFixture(o.body, o.fixture)
         o.collision:setUserData(o)
-        o.collision:setFilterData(0, 0xFFFF, 1)
+        o.collision:setFilterData(Settings.collision.comet, Settings.collision.ship + Settings.collision.projectile, 0)
         o.body:setAngle(o.rotation)
 
         local targetX = Screen.centerX + math.random(-200, 200)
