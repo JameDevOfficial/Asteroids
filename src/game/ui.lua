@@ -81,6 +81,24 @@ UI.drawDebug = function()
     end
 end
 
+function UI.drawNeonPolyline(points, color, intensity, width)
+    color = color or { 1, 1, 1 }
+    intensity = intensity or 5
+    width = width or 2
+
+    love.graphics.setBlendMode("add")
+    for i = intensity, 1, -1 do
+        local a = (i / intensity) * 0.02
+        love.graphics.setColor(color[1], color[2], color[3], a)
+        love.graphics.setLineWidth(width + i)
+        love.graphics.polygon("line", points)
+    end
+    love.graphics.setBlendMode("alpha")
+    love.graphics.setColor(color[1], color[2], color[3], 1)
+    love.graphics.setLineWidth(width)
+    love.graphics.polygon("line", points)
+end
+
 UI.windowResized = function()
     local screen = {
         X = 0,
