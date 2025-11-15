@@ -4,6 +4,7 @@ ship.__index = ship
 function ship:new(opts)
     opts          = opts or {}
     local o       = setmetatable({}, self)
+    o.type        = "ship"
     o.size        = opts.size or Settings.ship.size
     o.color       = opts.color or { 1, 1, 1, 1 }
     o.position    = opts.position or { x = Screen.centerX, y = Screen.centerY }
@@ -29,9 +30,9 @@ function ship:new(opts)
         o.body:setLinearDamping(o.damping)
         ---@diagnostic disable-next-line: deprecated
         o.fixture = love.physics.newPolygonShape(unpack(o.shape))
-        o.collsion = love.physics.newFixture(o.body, o.fixture)
-        o.collsion:setUserData(o)
-        o.collsion:setFilterData(1, 0xFFFF, -1)
+        o.collision = love.physics.newFixture(o.body, o.fixture)
+        o.collision:setUserData(o)
+        o.collision:setFilterData(1, 0xFFFD, 0)
         o.body:setAngle(o.rotation)
     end
     return o
@@ -51,18 +52,31 @@ function ship:checkMovement(dt)
             self:rotate(dt * 3)
         end
     end
-
-
 end
 
 function ship:shoot(dt)
     local projectile = {}
+    projectile.type = "projectile"
     projectile.size = { w = 25, h = 3 }
     projectile.body = love.physics.newBody(World, self.body:getX(), self.body:getY(), "dynamic")
     projectile.fixture = love.physics.newRectangleShape(projectile.size.w, projectile.size.h)
     projectile.collision = love.physics.newFixture(projectile.body, projectile.fixture)
     projectile.collision:setUserData(projectile)
-    projectile.collision:setFilterData(2, 0xFFFF, -1)
+    projectile.collision:setFilterData(2, 0xFFFF, 1)
+    local ship = self
+
+    function projectile:destroy()
+        if self.body then
+            self.body:destroy()
+            self.body = nil
+        end
+        for i, p in ipairs(ship.projectiles) do
+            if p == self then
+                table.remove(ship.projectiles, i)
+                break
+            end
+        end
+    end
 
     local angle = self.body:getAngle()
     projectile.body:setAngle(angle)
@@ -119,12 +133,12 @@ function ship:update(dt)
 
     for i = #self.projectiles, 1, -1 do
         local p = self.projectiles[i]
-        local x, y = p.body:getX(), p.body:getY()
+        if p.body then
+            local x, y = p.body:getX(), p.body:getY()
 
-        -- Check if out of bounds with padding
-        if x < -50 or x > Screen.X + 50 or y < -50 or y > Screen.Y + 50 then
-            p.body:destroy()
-            table.remove(self.projectiles, i)
+            if x < -50 or x > Screen.X + 50 or y < -50 or y > Screen.Y + 50 then
+                p:destroy()
+            end
         end
     end
 end

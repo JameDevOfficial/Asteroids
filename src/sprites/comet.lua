@@ -37,6 +37,7 @@ end
 function comet:new(opts)
     opts          = opts or {}
     local o       = setmetatable({}, self)
+    o.type        = "comet"
     o.size        = opts.size or Settings.ship.size
     o.color       = opts.color or { 1, 1, 1, 1 }
     local randPos = math.random(1, 2)
@@ -59,9 +60,9 @@ function comet:new(opts)
         o.body = love.physics.newBody(opts.world, o.position.x, o.position.y, "dynamic")
         ---@diagnostic disable-next-line: deprecated
         o.fixture = love.physics.newPolygonShape(unpack(o.shape))
-        o.collsion = love.physics.newFixture(o.body, o.fixture)
-        o.collsion:setUserData(o)
-        o.collsion:setFilterData(1, 0xFFFF, -1)
+        o.collision = love.physics.newFixture(o.body, o.fixture)
+        o.collision:setUserData(o)
+        o.collision:setFilterData(0, 0xFFFF, 1)
         o.body:setAngle(o.rotation)
 
         local targetX = Screen.centerX + math.random(-200, 200)

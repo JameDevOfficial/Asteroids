@@ -16,6 +16,7 @@ function love.load()
     -- Important Inits
     Screen = UI.windowResized()
     Game.state = "game"
+    World:setCallbacks(BeginContact, EndContact, PreSolve, PostSolve)
 
     -- Sprites
     PlayerShip = Ship:new({
@@ -62,4 +63,30 @@ end
 
 function love.keyreleased(key, scancode)
 
+end
+
+function BeginContact(a, b, coll)
+    local u1 = a:getUserData()
+    local u2 = b:getUserData()
+    if (u1.type == "projectile" and u2.type == "comet") or
+        (u2.type == "projectile" and u1.type == "comet") then
+        if u1.destroy then u1:destroy() end
+        if u2.destroy then u2:destroy() end
+    end
+    print("Contact")
+end
+
+function EndContact(a, b, coll)
+    local u1 = a:getUserData()
+    local u2 = b:getUserData()
+end
+
+function PreSolve(a, b, coll)
+    local u1 = a:getUserData()
+    local u2 = b:getUserData()
+end
+
+function PostSolve(a, b, coll, normalimpulse, tangentimpulse)
+    local u1 = a:getUserData()
+    local u2 = b:getUserData()
 end
