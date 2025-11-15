@@ -45,7 +45,7 @@ function comet:new(opts)
     else
         o.position = { x = (math.random(1, 2) == 1 and 0 or Screen.X), y = math.random(0, Screen.Y) }
     end
-    o.velocity = opts.velocity or { x = 0, y = 0 } 
+    o.velocity = opts.velocity or { x = 0, y = 0 }
     o.rotation = opts.rotation or 0
     o.offset   = opts.offset or { x = 0, y = 0 }
     o.scale    = opts.scale or { w = 1, y = 1 }
@@ -77,6 +77,22 @@ function comet:new(opts)
     return o
 end
 
+function comet:destroy()
+    if self.body then
+        self.body:destroy()
+        self.body = nil
+    end
+
+    if Comets then
+        for i = 1, #Comets do
+            if Comets[i] == self then
+                table.remove(Comets, i)
+                break
+            end
+        end
+    end
+end
+
 function comet:render()
     love.graphics.push();
     love.graphics.setLineWidth(2)
@@ -91,6 +107,19 @@ function comet:render()
     end
 
     love.graphics.pop()
+end
+
+function comet:update()
+    if not self.body then return end
+    if self.body:getX() > Screen.X + Settings.ship.screenPadding then
+        self:destroy()
+    elseif self.body:getX() < -Settings.ship.screenPadding then
+        self:destroy()
+    elseif self.body:getY() > Screen.Y + Settings.ship.screenPadding then
+        self:destroy()
+    elseif self.body:getY() < -Settings.ship.screenPadding then
+        self:destroy()
+    end
 end
 
 return comet

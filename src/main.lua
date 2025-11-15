@@ -28,6 +28,9 @@ function love.update(dt)
     PlayerShip:checkMovement(dt)
     PlayerShip:update(dt)
     Comet.spawnCometRandom(dt)
+    for i, comet in ipairs(Comets) do
+        comet:update()
+    end
 end
 
 function love.draw()

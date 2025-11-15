@@ -27,7 +27,7 @@ function ship:new(opts)
     if opts.world then
         o.body = love.physics.newBody(opts.world, o.position.x, o.position.y, "dynamic")
         o.body:setLinearDamping(o.damping)
----@diagnostic disable-next-line: deprecated
+        ---@diagnostic disable-next-line: deprecated
         o.fixture = love.physics.newPolygonShape(unpack(o.shape))
         o.collsion = love.physics.newFixture(o.body, o.fixture)
         o.collsion:setUserData(o)
@@ -51,6 +51,8 @@ function ship:checkMovement(dt)
             self:rotate(dt * 3)
         end
     end
+
+
 end
 
 function ship:shoot(dt)
