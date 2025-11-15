@@ -10,6 +10,11 @@ font50:setFilter("nearest", "nearest")
 
 UI.drawFrame = function()
     love.graphics.setBackgroundColor(0, 0, 0)
+    love.graphics.setColor(1, 1, 1)
+
+    local text = string.format("Points: %d", Player.points)
+    local width = fontDefault:getWidth(text)
+    love.graphics.print(text, Screen.X - width - 10, 10)
 end
 
 UI.drawDebug = function()

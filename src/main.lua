@@ -5,7 +5,11 @@ Comet = require("sprites.comet")
 
 IsPaused = false
 Screen = {}
-PlayerShip = Ship
+Player = {
+    ship = nil,
+    points = 0,
+
+}
 Comets = {}
 World = love.physics.newWorld(0, 0, true)
 Game = {
@@ -19,7 +23,7 @@ function love.load()
     World:setCallbacks(BeginContact, EndContact, PreSolve, PostSolve)
 
     -- Sprites
-    PlayerShip = Ship:new({
+    Player.ship = Ship:new({
         world = World
     })
 end
@@ -27,8 +31,8 @@ end
 function love.update(dt)
     if IsPaused then return end
     World:update(dt)
-    PlayerShip:checkMovement(dt)
-    PlayerShip:update(dt)
+    Player.ship:checkMovement(dt)
+    Player.ship:update(dt)
     Comet.spawnCometRandom(dt)
     for i, comet in ipairs(Comets) do
         comet:update()
@@ -37,7 +41,7 @@ end
 
 function love.draw()
     UI.drawFrame()
-    PlayerShip:render()
+    Player.ship:render()
 
 
     if Settings.DEBUG == true then
@@ -59,7 +63,7 @@ function love.keypressed(key, scancode, isrepeat)
         Settings.DEBUG = not Settings.DEBUG
     end
     if key == "space" then
-        PlayerShip:shoot(love.timer.getDelta())
+        Player.ship:shoot(love.timer.getDelta())
     end
 end
 
@@ -74,6 +78,7 @@ function BeginContact(a, b, coll)
         (u2.type == "projectile" and u1.type == "comet") then
         if u1.destroy then u1:destroy() end
         if u2.destroy then u2:destroy() end
+        Player.points = Player.points + 1
     end
     if (u1.type == "ship" and u2.type == "comet") or
         (u2.type == "ship" and u1.type == "comet") then
