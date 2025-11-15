@@ -25,6 +25,7 @@ function love.load()
 end
 
 function love.update(dt)
+    if IsPaused then return end
     World:update(dt)
     PlayerShip:checkMovement(dt)
     PlayerShip:update(dt)
@@ -52,6 +53,7 @@ function love.resize()
 end
 
 function love.keypressed(key, scancode, isrepeat)
+    if IsPaused then return end
     local dt = love.timer.getDelta()
     if key == "f5" then
         Settings.DEBUG = not Settings.DEBUG
@@ -72,6 +74,10 @@ function BeginContact(a, b, coll)
         (u2.type == "projectile" and u1.type == "comet") then
         if u1.destroy then u1:destroy() end
         if u2.destroy then u2:destroy() end
+    end
+    if (u1.type == "ship" and u2.type == "comet") or
+        (u2.type == "ship" and u1.type == "comet") then
+        IsPaused = true
     end
     print("Contact")
 end

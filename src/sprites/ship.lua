@@ -116,6 +116,15 @@ function ship:render()
     end
 end
 
+function ship:destroy()
+    if self.body then
+        self.body:destroy()
+        self.body = nil
+    end
+
+    Ship = nil
+end
+
 function ship:update(dt)
     if not self.body then return end
     if self.body:getX() > Screen.X + Settings.ship.screenPadding then
