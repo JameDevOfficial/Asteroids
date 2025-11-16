@@ -22,7 +22,7 @@ local function generateRandomMeteorShape(w, h)
 
     for i = 0, points - 1 do
         local angle = i * angleStep
-        local radRand = love.math.random(50, 100) / 50
+        local radRand = love.math.random(25, 150) / 50
         local rad = math.min(w, h) / 2 * radRand
 
         local x = math.cos(angle) * rad

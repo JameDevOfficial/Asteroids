@@ -139,10 +139,7 @@ function ship:destroy()
     end
 end
 
-function ship:update(dt)
-    if self.safeTime > 0 then
-        self.safeTime = self.safeTime - dt
-    end
+function ship:checkBounds(dt)
     if not self.body then return end
     if self.body:getX() > Screen.X + Settings.ship.screenPadding then
         self.body:setPosition(-Settings.ship.screenPadding, self.body:getY())
@@ -156,6 +153,13 @@ function ship:update(dt)
     if self.body:getY() < -Settings.ship.screenPadding then
         self.body:setPosition(self.body:getX(), Screen.Y + Settings.ship.screenPadding)
     end
+end
+
+function ship:update(dt)
+    if self.safeTime > 0 then
+        self.safeTime = self.safeTime - dt
+    end
+    ship:checkBounds(dt)
 
     for i = #self.projectiles, 1, -1 do
         local p = self.projectiles[i]

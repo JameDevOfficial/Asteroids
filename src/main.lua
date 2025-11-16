@@ -70,6 +70,7 @@ function love.update(dt)
         for i, comet in ipairs(Comets) do
             comet:update()
         end
+        Player.ship:checkBounds(dt)
         return
     end
     if Player.ship.respawn and Player.ship.respawn == true then
@@ -112,6 +113,9 @@ function love.resize()
 end
 
 function love.keypressed(key, scancode, isrepeat)
+    if key == "f5" then
+        Settings.DEBUG = not Settings.DEBUG
+    end
     if IsPaused then
         if key == "return" then
             Game.reset()
@@ -120,9 +124,7 @@ function love.keypressed(key, scancode, isrepeat)
         return
     end
     local dt = love.timer.getDelta()
-    if key == "f5" then
-        Settings.DEBUG = not Settings.DEBUG
-    end
+
     if key == "space" then
         Player.ship:shoot(love.timer.getDelta())
     end
@@ -144,7 +146,7 @@ function BeginContact(a, b, coll)
         if u2 and u2.destroy then u2:destroy() end
         Player.points = Player.points + 1
     end
-    if Player.ship.safeTime <= 0 then 
+    if Player.ship.safeTime <= 0 then
         if (t1 == "ship" and t2 == "comet") or
             (t2 == "ship" and t1 == "comet") then
             Player.lives = Player.lives - 1
