@@ -2,7 +2,6 @@ Settings = require("game.settings")
 UI = require("game.ui");
 Ship = require("sprites.ship")
 Comet = require("sprites.comet")
-BTMAN = require("game.simplebutton")
 
 IsPaused = true
 Screen = {}
@@ -26,7 +25,9 @@ function love.load()
 end
 
 function love.update(dt)
-    if IsPaused then return end
+    if IsPaused then
+        return
+    end
     World:update(dt)
     Player.ship:checkMovement(dt)
     Player.ship:update(dt)
@@ -34,7 +35,6 @@ function love.update(dt)
     for i, comet in ipairs(Comets) do
         comet:update()
     end
-    BTMAN.update(dt)
 end
 
 function love.draw()
@@ -52,7 +52,6 @@ function love.draw()
     for i, v in ipairs(Comets) do
         v:render()
     end
-    BTMAN.draw()
 end
 
 function love.resize()
@@ -60,7 +59,10 @@ function love.resize()
 end
 
 function love.keypressed(key, scancode, isrepeat)
-    if IsPaused then return end
+    if IsPaused then
+        if key == "space" then IsPaused = false end
+        return
+    end
     local dt = love.timer.getDelta()
     if key == "f5" then
         Settings.DEBUG = not Settings.DEBUG
@@ -72,14 +74,6 @@ end
 
 function love.keyreleased(key, scancode)
 
-end
-
-function love.mousepressed(x, y, msbutton, istouch, presses)
-    BTMAN.mousepressed(x, y, msbutton)
-end
-
-function love.mousereleased(x, y, msbutton, istouch, presses)
-    BTMAN.mousereleased(x, y, msbutton)
 end
 
 function BeginContact(a, b, coll)

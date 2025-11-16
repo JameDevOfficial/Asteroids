@@ -29,31 +29,12 @@ UI.drawMenu = function()
     local width = titleFont:getWidth(text)
     love.graphics.print(text, (Screen.X - width) / 2, Screen.centerY - titleFont:getHeight() * 2)
 
-    -- Button
-    text = "Play Game"
-    BTMAN.default.textColor = { 1, 1, 1, 1 }
+    text = "Press 'space' to start"
     love.graphics.setFont(textFont)
     love.graphics.setColor(1, 1, 1)
-
-    local paddingX, paddingY = 20, 8
-    local btnWidth = textFont:getWidth(text) + paddingX * 2
-    local btnHeight = textFont:getHeight() + paddingY * 2
-
-    local startButton = BTMAN.new(text,
-        Screen.centerX - btnWidth / 2,
-        Screen.centerY + titleFont:getHeight() * 1.2,
-        btnWidth,
-        btnHeight,
-        false,
-        { 1, 1, 1, 0 },
-        { 0.1, 0.1, 0.1, 0.1 },
-        { 1, 1, 1, 0 },
-        textFont)
-
-    startButton:setAlignment('center')
-    startButton.onClick = function()
-        IsPaused = not IsPaused
-    end
+    width = textFont:getWidth(text)
+    local height = textFont:getHeight()
+    love.graphics.print(text, (Screen.X - width) / 2, (Screen.centerY - height) * 2)
 end
 
 UI.drawDebug = function()
