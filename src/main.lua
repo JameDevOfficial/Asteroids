@@ -46,6 +46,7 @@ end
 
 function love.load()
     -- Important Inits
+    math.randomseed(os.time())
     Screen = UI.windowResized()
     World:setCallbacks(BeginContact, EndContact, PreSolve, PostSolve)
 
