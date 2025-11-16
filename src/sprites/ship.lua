@@ -94,7 +94,7 @@ function ship:render()
     love.graphics.translate(self.body:getX(), self.body:getY())
     love.graphics.rotate(self.body:getAngle())
     love.graphics.setColor(self.color)
-    UI.drawNeonPolyline(self.shape, { 1, 1, 1 }, 12, 2)
+    UI.drawNeonPolyline(self.shape, Settings.ship.color, 16, 2)
     if Settings.DEBUG then
         love.graphics.setColor(1, 0, 0, 1)
         love.graphics.line(0, 0, 30, 0)
