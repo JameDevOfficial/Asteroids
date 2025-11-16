@@ -4,8 +4,10 @@ local fontDefault = love.graphics.newFont(20)
 local font30 = love.graphics.newFont(30)
 local font50 = love.graphics.newFont(50)
 local titleFont = love.graphics.newFont(Settings.fonts.quirkyRobot, 128, "normal", love.graphics.getDPIScale())
+local textFont = love.graphics.newFont(Settings.fonts.semiCoder, 32, "normal", love.graphics.getDPIScale())
 
 titleFont:setFilter("nearest", "nearest")
+textFont:setFilter("nearest", "nearest")
 fontDefault:setFilter("nearest", "nearest")
 font30:setFilter("nearest", "nearest")
 font50:setFilter("nearest", "nearest")
@@ -26,6 +28,32 @@ UI.drawMenu = function()
     local text = "Asteroids"
     local width = titleFont:getWidth(text)
     love.graphics.print(text, (Screen.X - width) / 2, Screen.centerY - titleFont:getHeight() * 2)
+
+    -- Button
+    text = "Play Game"
+    BTMAN.default.textColor = { 1, 1, 1, 1 }
+    love.graphics.setFont(textFont)
+    love.graphics.setColor(1, 1, 1)
+
+    local paddingX, paddingY = 20, 8
+    local btnWidth = textFont:getWidth(text) + paddingX * 2
+    local btnHeight = textFont:getHeight() + paddingY * 2
+
+    local startButton = BTMAN.new(text,
+        Screen.centerX - btnWidth / 2,
+        Screen.centerY + titleFont:getHeight() * 1.2,
+        btnWidth,
+        btnHeight,
+        false,
+        { 1, 1, 1, 0 },
+        { 0.1, 0.1, 0.1, 0.1 },
+        { 1, 1, 1, 0 },
+        textFont)
+
+    startButton:setAlignment('center')
+    startButton.onClick = function()
+        IsPaused = not IsPaused
+    end
 end
 
 UI.drawDebug = function()

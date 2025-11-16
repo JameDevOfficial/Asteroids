@@ -20,4 +20,5 @@ M.collision.projectile = 4
 
 M.fonts = {}
 M.fonts.quirkyRobot = "assets/fonts/QuirkyRobot.ttf"
+M.fonts.semiCoder = "assets/fonts/SemiCoder.otf"
 return M;
