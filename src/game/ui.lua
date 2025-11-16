@@ -42,7 +42,7 @@ UI.drawDebug = function()
             "Images: %d\n" ..
             "Fonts: %d\n",
             usedMem / 1024,
-            collectgarbage("count") > 0 and collectgarbage("count") / 10 or 0,
+            collectgarbage("count") > 0 and collectgarbage("count") / 7 or 0,
             stats.drawcalls,
             stats.canvasswitches,
             stats.texturememory / 1024 / 1024,
@@ -50,25 +50,44 @@ UI.drawDebug = function()
             stats.fonts
         )
         love.graphics.print(perfText, 10, y)
-        y = y + fontDefault:getHeight() * 11
+        y = y + fontDefault:getHeight() * 8
 
         -- Game
         local dt = love.timer.getDelta()
         local avgDt = love.timer.getAverageDelta()
+        local projCount = (Player and Player.ship and Player.ship.projectiles and type(Player.ship.projectiles) == "table") and
+            #Player.ship.projectiles or 0
+        local numComets = (type(Comets) == "table") and #Comets or 0
+        local posX, posY = 0, 0
+        local velX, velY = 0, 0
+        local shipAngle = 0
+        if Player and Player.ship and Player.ship.body then
+            posX, posY = Player.ship.body:getPosition()
+            velX, velY = Player.ship.body:getLinearVelocity()
+            shipAngle = Player.ship.body:getAngle()
+        end
         local playerText = string.format(
             "Game Paused: %s\n" ..
             "Delta Time: %.4fs (%.1f ms)\n" ..
             "Avg Delta: %.4fs (%.1f ms)\n" ..
             "Time: %.2fs\n" ..
-            "Comets: %d",
+            "Comets: %d\n" ..
+            "Projectiles: %d\n" ..
+            "Ship X:%d Y:%d\n" ..
+            "Ship Velocity X:%d Y:%d\n" ..
+            "Ship Rotation: %d",
             tostring(IsPaused),
             dt, dt * 1000,
             avgDt, avgDt * 1000,
             love.timer.getTime(),
-            #Comets
+            numComets,
+            projCount,
+            posX, posY,
+            velX, velY,
+            shipAngle
         )
         love.graphics.print(playerText, 10, y)
-        y = y + fontDefault:getHeight() * 8
+        y = y + fontDefault:getHeight() * 10
 
         -- System Info
         local renderer = love.graphics.getRendererInfo and love.graphics.getRendererInfo() or ""
