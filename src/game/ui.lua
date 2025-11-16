@@ -3,18 +3,29 @@ local UI = {}
 local fontDefault = love.graphics.newFont(20)
 local font30 = love.graphics.newFont(30)
 local font50 = love.graphics.newFont(50)
+local titleFont = love.graphics.newFont(Settings.fonts.quirkyRobot, 128, "normal", love.graphics.getDPIScale())
 
+titleFont:setFilter("nearest", "nearest")
 fontDefault:setFilter("nearest", "nearest")
 font30:setFilter("nearest", "nearest")
 font50:setFilter("nearest", "nearest")
 
 UI.drawFrame = function()
+    love.graphics.setFont(font30)
     love.graphics.setBackgroundColor(0, 0, 0)
     love.graphics.setColor(1, 1, 1)
 
     local text = string.format("Points: %d", Player.points)
-    local width = fontDefault:getWidth(text)
+    local width = font30:getWidth(text)
     love.graphics.print(text, Screen.X - width - 10, 10)
+end
+
+UI.drawMenu = function()
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.setFont(titleFont)
+    local text = "Asteroids"
+    local width = titleFont:getWidth(text)
+    love.graphics.print(text, (Screen.X - width) / 2, Screen.centerY - titleFont:getHeight() * 2)
 end
 
 UI.drawDebug = function()

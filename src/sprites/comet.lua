@@ -67,6 +67,7 @@ function comet:new(opts)
 
         local targetX = Screen.centerX + math.random(-200, 200)
         local targetY = Screen.centerY + math.random(-200, 200)
+        ---@diagnostic disable-next-line: deprecated
         local angle = math.atan2(targetY - o.position.y, targetX - o.position.x)
 
         angle = angle + math.rad(math.random(-30, 30))

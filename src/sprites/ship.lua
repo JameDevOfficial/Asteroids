@@ -39,7 +39,7 @@ function ship:new(opts)
 end
 
 function ship:checkMovement(dt)
-    if Game.state == "game" then
+    if IsPaused == false then
         if love.keyboard.isDown("w") or love.keyboard.isDown("up") then
             self:applyThrust(500)
         end

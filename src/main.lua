@@ -3,7 +3,7 @@ UI = require("game.ui");
 Ship = require("sprites.ship")
 Comet = require("sprites.comet")
 
-IsPaused = false
+IsPaused = true
 Screen = {}
 Player = {
     ship = nil,
@@ -12,14 +12,10 @@ Player = {
 }
 Comets = {}
 World = love.physics.newWorld(0, 0, true)
-Game = {
-    state = "unloaded" -- unloaded, loading, <menu, game, lost>
-}
 
 function love.load()
     -- Important Inits
     Screen = UI.windowResized()
-    Game.state = "game"
     World:setCallbacks(BeginContact, EndContact, PreSolve, PostSolve)
 
     -- Sprites
@@ -40,7 +36,11 @@ function love.update(dt)
 end
 
 function love.draw()
-    UI.drawFrame()
+    if IsPaused == false then
+        UI.drawFrame()
+    else
+        UI.drawMenu()
+    end
     Player.ship:render()
 
 
