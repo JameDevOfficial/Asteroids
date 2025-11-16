@@ -10,10 +10,11 @@ function ship:new(opts)
     o.position    = opts.position or { x = Screen.centerX, y = Screen.centerY }
     o.velocity    = opts.velocity or { x = 0, y = 0 }
     o.damping     = opts.damping or 0.5
-    o.rotation    = opts.rotation or -math.pi/2
+    o.rotation    = opts.rotation or -math.pi / 2
     o.offset      = opts.offset or { x = 0, y = 0 }
     o.scale       = opts.scale or { w = 1, y = 1 }
     o.projectiles = {}
+    o.safeTime    = Settings.ship.safeTime
 
     local w_2     = o.size.w / 2
     local h_2     = o.size.h / 2
@@ -89,12 +90,20 @@ function ship:shoot(dt)
 end
 
 function ship:render()
+    local shipVisible = true
+    if self.safeTime and self.safeTime > 0 and IsPaused == false then
+        local blinkRate = 4
+        shipVisible = (math.floor(self.safeTime * blinkRate) % 2) == 0
+    end
     love.graphics.push();
     love.graphics.setLineWidth(2)
     love.graphics.translate(self.body:getX(), self.body:getY())
     love.graphics.rotate(self.body:getAngle())
     love.graphics.setColor(self.color)
-    UI.drawNeonPolyline(self.shape, Settings.ship.color, 16, 2)
+    if shipVisible then
+        UI.drawNeonPolyline(self.shape, Settings.ship.color, 16, 2)
+    else
+    end
     if Settings.DEBUG then
         love.graphics.setColor(1, 0, 0, 1)
         love.graphics.line(0, 0, 30, 0)
@@ -123,6 +132,9 @@ function ship:destroy()
 end
 
 function ship:update(dt)
+    if self.safeTime > 0 then
+        self.safeTime = self.safeTime - dt
+    end
     if not self.body then return end
     if self.body:getX() > Screen.X + Settings.ship.screenPadding then
         self.body:setPosition(-Settings.ship.screenPadding, self.body:getY())

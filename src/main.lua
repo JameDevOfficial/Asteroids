@@ -144,15 +144,16 @@ function BeginContact(a, b, coll)
         if u2 and u2.destroy then u2:destroy() end
         Player.points = Player.points + 1
     end
-    if (t1 == "ship" and t2 == "comet") or
-        (t2 == "ship" and t1 == "comet") then
-        Player.lives = Player.lives - 1
-        Player.ship.respawn = true
-        if Player.lives == 0 then
-            IsPaused = true
+    if Player.ship.safeTime <= 0 then 
+        if (t1 == "ship" and t2 == "comet") or
+            (t2 == "ship" and t1 == "comet") then
+            Player.lives = Player.lives - 1
+            Player.ship.respawn = true
+            if Player.lives == 0 then
+                IsPaused = true
+            end
         end
     end
-    print("Contact")
 end
 
 function EndContact(a, b, coll)
