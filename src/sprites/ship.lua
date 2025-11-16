@@ -159,7 +159,7 @@ function ship:update(dt)
     if self.safeTime > 0 then
         self.safeTime = self.safeTime - dt
     end
-    ship:checkBounds(dt)
+    self:checkBounds(dt)
 
     for i = #self.projectiles, 1, -1 do
         local p = self.projectiles[i]
