@@ -80,13 +80,13 @@ function love.update(dt)
         })
         Player.ship.respawn = false
     end
+    for i, comet in ipairs(Comets) do
+        comet:update()
+    end
     World:update(dt)
     Player.ship:checkMovement(dt)
     Player.ship:update(dt)
     Comet.spawnCometRandom(dt)
-    for i, comet in ipairs(Comets) do
-        comet:update()
-    end
 end
 
 function love.draw()
@@ -142,8 +142,18 @@ function BeginContact(a, b, coll)
 
     if (t1 == "projectile" and t2 == "comet") or
         (t2 == "projectile" and t1 == "comet") then
-        if u1 and u1.destroy then u1:destroy() end
-        if u2 and u2.destroy then u2:destroy() end
+        if u1.type == "comet" then
+            u1.collisionHappened = true
+            print("comet found and coll set to true")
+        elseif u2.type == "comet" then
+            u2.collisionHappened = true
+            print("comet found and coll set to true")
+        end
+        if u1.type == "projectile" then
+            u1:destroy()
+        elseif u2.type == "projectile" then
+            u2:destroy()
+        end
         Player.points = Player.points + 1
     end
     if Player.ship.safeTime <= 0 then

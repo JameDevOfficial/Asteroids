@@ -15,14 +15,14 @@ comet.spawnCometRandom = function(dt)
     comet.timer = 0
 end
 
-local function generateRandomMeteorShape(w, h)
+local function generateRandomMeteorShape(w, h, minR, maxR)
     local points = math.random(5, 8)
     local angleStep = (math.pi * 2) / points
     local shape = {}
 
     for i = 0, points - 1 do
         local angle = i * angleStep
-        local radRand = love.math.random(25, 150) / 50
+        local radRand = love.math.random(minR, maxR) / 50
         local rad = math.min(w, h) / 2 * radRand
 
         local x = math.cos(angle) * rad
@@ -35,26 +35,40 @@ local function generateRandomMeteorShape(w, h)
 end
 
 function comet:new(opts)
-    opts          = opts or {}
-    local o       = setmetatable({}, self)
-    o.type        = "comet"
-    o.size        = opts.size or Settings.ship.size
-    o.color       = opts.color or { 1, 1, 1, 1 }
-    local randPos = math.random(1, 2)
-    if randPos == 1 then
-        o.position = { x = math.random(0, Screen.X), y = (math.random(1, 2) == 1 and 0 or Screen.Y) }
+    opts        = opts or {}
+    local o     = setmetatable({}, self)
+    o.type      = "comet"
+    o.sizeClass = opts.sizeClass or 1 -- 1 big, 2 medium, 3 small
+    o.size      = opts.size or Settings.ship.size
+    o.color     = opts.color or { 1, 1, 1, 1 }
+    if not opts.position then
+        local randPos = math.random(1, 2)
+        if randPos == 1 then
+            o.position = { x = math.random(0, Screen.X), y = (math.random(1, 2) == 1 and 0 or Screen.Y) }
+        else
+            o.position = { x = (math.random(1, 2) == 1 and 0 or Screen.X), y = math.random(0, Screen.Y) }
+        end
     else
-        o.position = { x = (math.random(1, 2) == 1 and 0 or Screen.X), y = math.random(0, Screen.Y) }
+        o.position = opts.position
     end
-    o.velocity = opts.velocity or { x = 0, y = 0 }
-    o.rotation = opts.rotation or 0
-    o.offset   = opts.offset or { x = 0, y = 0 }
-    o.scale    = opts.scale or { w = 1, y = 1 }
 
-    local w_2  = o.size.w / 2
-    local h_2  = o.size.h / 2
+    o.velocity       = opts.velocity or { x = 0, y = 0 }
+    o.rotation       = opts.rotation or 0
+    o.offset         = opts.offset or { x = 0, y = 0 }
+    o.scale          = opts.scale or { w = 1, y = 1 }
 
-    o.shape    = generateRandomMeteorShape(o.size.w, o.size.h)
+    local w_2        = o.size.w / 2
+    local h_2        = o.size.h / 2
+
+    local minR, maxR = 25, 150
+    local scales     = { 1.0, 0.55, 0.3 }
+    local scale      = scales[o.sizeClass] or 1.0
+    o.size           = opts.size or {
+        w = math.max(8, math.floor(Settings.ship.size.w * scale)),
+        h = math.max(8, math.floor(Settings.ship.size.h * scale))
+    }
+
+    o.shape          = generateRandomMeteorShape(o.size.w, o.size.h, minR, maxR)
 
     if opts.world then
         o.body = love.physics.newBody(opts.world, o.position.x, o.position.y, "dynamic")
@@ -79,7 +93,52 @@ function comet:new(opts)
     return o
 end
 
+function comet:handleCollision()
+    local x, y = self.body:getPosition()
+    if self.sizeClass == 1 then
+        local newComets = math.random(1, 2)
+        for i = 1, newComets, 1 do
+            local angle = math.rad(math.random(0, 359))
+            local velocity = {
+                x = math.cos(angle) * Settings.comet.explosionSpeed,
+                y = math.sin(angle) * Settings.comet.explosionSpeed
+            }
+            local newComet = Comet:new({
+                world = World,
+                sizeClass = 2,
+                position = { x = x, y = y },
+                velocity = velocity
+            })
+            table.insert(Comets, newComet)
+        end
+        self:destroy()
+    elseif self.sizeClass == 2 then
+        local newComets = math.random(1, 2)
+        for i = 1, newComets, 1 do
+            local angle = math.rad(math.random(0, 359))
+            local velocity = {
+                x = math.cos(angle) * Settings.comet.explosionSpeed,
+                y = math.sin(angle) * Settings.comet.explosionSpeed
+            }
+            local newComet = Comet:new({
+                world = World,
+                sizeClass = 3,
+                position = { x = x, y = y },
+                velocity = velocity
+            })
+            table.insert(Comets, newComet)
+        end
+        self:destroy()
+    elseif self.sizeClass == 3 then
+        self:destroy()
+    end
+end
+
 function comet:destroy()
+    if self.collision then
+        self.collision:destroy()
+        self.collision = nil
+    end
     if self.body then
         self.body:destroy()
         self.body = nil
@@ -96,6 +155,7 @@ function comet:destroy()
 end
 
 function comet:render()
+    if not self.body then return end
     love.graphics.push();
     love.graphics.setLineWidth(2)
     love.graphics.translate(self.body:getX(), self.body:getY())
@@ -113,6 +173,12 @@ end
 
 function comet:update()
     if not self.body then return end
+    if self.collisionHappened then
+        self:handleCollision()
+        self.collisionHappened = nil
+        if not self.body then return end
+    end
+
     if self.body:getX() > Screen.X + Settings.ship.screenPadding then
         self:destroy()
     elseif self.body:getX() < -Settings.ship.screenPadding then

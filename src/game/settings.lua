@@ -12,8 +12,9 @@ M.ship.safeTime = 3 -- s
 
 M.comet = {}
 M.comet.spawnChance = 5  -- %
-M.comet.spawnDelay = 0.7 -- ms
+M.comet.spawnDelay = 1.2 -- ms
 M.comet.speed = 100      -- ms
+M.comet.explosionSpeed = 200
 
 M.collision = {}
 M.collision.ship = 1
