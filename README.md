@@ -2,7 +2,7 @@
 
 <img src="asteroidsDemo.gif" height=500 alt="thumbnail"/> 
 
-Asteroids is a remake of the famous [Asteroids]() game. You can move around using W/A/D (no S) and shoot by pressing space. The goal is to destroy as many asteroids without dying. Asteroids will split up to 3 times. Your ship will teleport to the opposite border when you try to go out of bounds.
+Asteroids is a remake of the famous [Asteroids](https://freeasteroids.org/) (Not mine!) game. You can move around using W/A/D (no S) and shoot by pressing space. The goal is to destroy as many asteroids without dying. Asteroids will split up to 3 times. Your ship will teleport to the opposite border when you try to go out of bounds.
 
 [![Asteroids](https://hackatime-badge.hackclub.com/U087BUC6ZFW/Asteroids?logo=hackclub&logoColor=white)](https://hackatime-badge.hackclub.com/U087BUC6ZFW/Asteroids) 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
