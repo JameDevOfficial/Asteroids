@@ -12,14 +12,56 @@ fontDefault:setFilter("nearest", "nearest")
 font30:setFilter("nearest", "nearest")
 font50:setFilter("nearest", "nearest")
 
+local function polygonBounds(points)
+    local minX, minY = math.huge, math.huge
+    local maxX, maxY = -math.huge, -math.huge
+    for i = 1, #points, 2 do
+        local x, y = points[i], points[i + 1]
+        minX = math.min(minX, x); minY = math.min(minY, y)
+        maxX = math.max(maxX, x); maxY = math.max(maxY, y)
+    end
+    return minX, minY, maxX - minX, maxY - minY
+end
+
+function UI.drawShipAt(x, y, desiredWidth, rotation)
+    if not (Player and Player.ship and Player.ship.shape) then return end
+    local points = Player.ship.shape
+    local minX, minY, width, height = polygonBounds(points)
+    if width == 0 then return end
+    local scale = desiredWidth / width
+    local cx = minX + width / 2
+    local cy = minY + height / 2
+
+    local pts = {}
+    for i = 1, #points, 2 do
+        table.insert(pts, (points[i] - cx) * scale)
+        table.insert(pts, (points[i + 1] - cy) * scale)
+    end
+
+    love.graphics.push()
+    love.graphics.translate(x, y)
+    love.graphics.rotate(rotation or 0)
+    love.graphics.polygon("line", pts)
+    love.graphics.pop()
+end
+
 UI.drawFrame = function()
-    love.graphics.setFont(font30)
+    love.graphics.setFont(textFont)
     love.graphics.setBackgroundColor(0, 0, 0)
     love.graphics.setColor(1, 1, 1)
 
-    local text = string.format("Points: %d", Player.points)
-    local width = font30:getWidth(text)
+    local text = string.format("%03d", Player.points)
+    local width = textFont:getWidth(text)
     love.graphics.print(text, Screen.X - width - 10, 10)
+
+    local shipW = Screen.minSize * 0.03
+    local spacing = shipW * 1.5
+    local y = textFont:getHeight() + 20
+    local startX = Screen.X - (Player.lives - 1) * (spacing) - shipW - 10
+    for i = 0, Player.lives-1 do
+        local x = startX + i * spacing
+        UI.drawShipAt(x, y, shipW, -math.pi / 2)
+    end
 end
 
 UI.drawMenu = function()
@@ -29,7 +71,7 @@ UI.drawMenu = function()
     local width = titleFont:getWidth(text)
     love.graphics.print(text, (Screen.X - width) / 2, Screen.centerY - titleFont:getHeight() * 2)
 
-    text = "Press 'space' to start"
+    text = "Press 'enter' to start"
     love.graphics.setFont(textFont)
     love.graphics.setColor(1, 1, 1)
     width = textFont:getWidth(text)
@@ -95,7 +137,7 @@ UI.drawDebug = function()
             "Projectiles: %d\n" ..
             "Ship X:%d Y:%d\n" ..
             "Ship Velocity X:%d Y:%d\n" ..
-            "Ship Rotation: %d",
+            "Ship Rotation: %f",
             tostring(IsPaused),
             dt, dt * 1000,
             avgDt, avgDt * 1000,

@@ -10,7 +10,7 @@ function ship:new(opts)
     o.position    = opts.position or { x = Screen.centerX, y = Screen.centerY }
     o.velocity    = opts.velocity or { x = 0, y = 0 }
     o.damping     = opts.damping or 0.5
-    o.rotation    = opts.rotation or 0
+    o.rotation    = opts.rotation or -math.pi/2
     o.offset      = opts.offset or { x = 0, y = 0 }
     o.scale       = opts.scale or { w = 1, y = 1 }
     o.projectiles = {}
@@ -120,8 +120,6 @@ function ship:destroy()
         self.body:destroy()
         self.body = nil
     end
-
-    Ship = nil
 end
 
 function ship:update(dt)

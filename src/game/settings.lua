@@ -7,6 +7,7 @@ M.ship.size = { w = 50, h = 50 } -- w, h in px
 M.ship.color = { 0.5, 1, 1 }
 M.ship.screenPadding = 25
 M.ship.projectileSpeed = 100 -- in pixels, when to make it teleport
+M.ship.startLives = 3
 
 M.comet = {}
 M.comet.spawnChance = 5  -- %
