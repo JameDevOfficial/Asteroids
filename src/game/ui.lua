@@ -57,8 +57,8 @@ UI.drawFrame = function()
     local shipW = Screen.minSize * 0.03
     local spacing = shipW * 1.5
     local y = textFont:getHeight() + 20
-    local startX = Screen.X - (Player.lives - 1) * (spacing) - shipW - 10
-    for i = 0, Player.lives-1 do
+    local startX = Screen.X - (Player.lives - 1) * (spacing) - shipW
+    for i = 0, Player.lives - 1 do
         local x = startX + i * spacing
         UI.drawShipAt(x, y, shipW, -math.pi / 2)
     end
@@ -70,6 +70,13 @@ UI.drawMenu = function()
     local text = "Asteroids"
     local width = titleFont:getWidth(text)
     love.graphics.print(text, (Screen.X - width) / 2, Screen.centerY - titleFont:getHeight() * 2)
+
+    text = string.format("Points: %03d", Player.points)
+    love.graphics.setFont(textFont)
+    love.graphics.setColor(1, 1, 1)
+    width = textFont:getWidth(text)
+    local height = textFont:getHeight()
+    love.graphics.print(text, (Screen.X - width) / 2, (Screen.centerY - height) * 0.675)
 
     text = "Press 'enter' to start"
     love.graphics.setFont(textFont)

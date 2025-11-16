@@ -47,10 +47,12 @@ function ship:checkMovement(dt)
 
         if love.keyboard.isDown("a") or love.keyboard.isDown("left") then
             self:rotate(-dt * 3)
+            self:stopSpin()
         end
 
         if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
             self:rotate(dt * 3)
+            self:stopSpin()
         end
     end
 end
@@ -121,6 +123,12 @@ function ship:render()
         love.graphics.rectangle("fill", -projectile.size.w / 2, -projectile.size.h / 2, projectile.size.w,
             projectile.size.h)
         love.graphics.pop()
+    end
+end
+
+function ship:stopSpin()
+    if self.body and self.body.setAngularVelocity then
+        self.body:setAngularVelocity(0)
     end
 end
 
