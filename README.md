@@ -12,6 +12,12 @@ Asteroids is a remake of the famous [Asteroids](https://freeasteroids.org/) (Not
 
 </div>
 
+# Controls
+Enter - Start the Game
+W/A/D - Move around
+Space - Shoot
+F5 - Debugging infos
+
 # Features
 - Fly around as a ship
 - Destroy Asteroids
